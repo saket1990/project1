@@ -1,34 +1,83 @@
-const authorModel = require("../models/authorModel")
+const AuthorModel = require("../models/authorModel")
 const jwt = require("jsonwebtoken")
-const validator= require("validator")
 
 
 const createAuthor = async function (req, res) {
     try {
-        let data = req.body
-        let validate=validator.isEmail(req.body.email)
-        if(!validate){
-            res.status(404).send({status:false, msg:"enter valid emailid"})}
-        let savedData = await authorModel.create(data)
-        res.status(200).send({ status: true, data: savedData })
+        let { title, fName, lName, emailId, password } = req.body
+        if (!title) { return res.status(400).send({ status: false, message: "author title is required" }) }
+        if (title !== "Mr") {
+            if (title !== "Mrs") {
+                if (title !== "Miss") {
+                    return res.status(400).send({ status: false, message: "Should be Mr , Mrs , Miss" })
+                }
+            }
+        }
+        if (!fName) {
+            return res.status(400).send({ status: false, message: "author first name is required" })
+        }
+        if (!/^[a-zA-Z]+$/.test(fName)) {
+            res.status(400).send({ status: false, message: "First name should be a Character" })
+        }
+        if (!lName) {
+            return res.status(400).send({ status: false, message: "author last name is required" })
+        }
+        if (!/^[a-zA-Z]+$/.test(lName)) {
+            res.status(400).send({ status: false, message: "Last name should be a Character" })
+        }
+        if (!emailId) {
+            return res.status(400).send({ status: false, message: "author email is required" })
+        }
+        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailId)) {
+            res.status(400).send({ status: false, message: "Valid emailId is required" })
+        }
+        if (!password) {
+            return res.status(400).send({ status: false, message: "author password is required" })
+        }
+        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
+            res.status(400).send({ status: false, message: "password should contain atleastone number or one alphabet and should be 8 character long" })
+        }
+        let authorCreated = await AuthorModel.create(req.body)
+        res.status(201).send({ status: true, date: authorCreated, msg: "created" })
+    }
+    catch (err) { return res.status(500).send({ status: false, msg: err.message }) }
+}
+
+const loginAuthor = async function (req, res) {
+    try {
+        let authorName = req.body.emailId;
+        let password = req.body.password;
+        if (!authorName) {
+            return res.status(400).send({ status: false, msg: "email is required" })
+        }
+        if (!password) {
+            return res.status(400).send({ status: false, msg: "password is required" })
+        }
+
+        let author = await AuthorModel.findOne({ emailId: authorName, password: password });
+        if (!author)
+            return res.status(400).send({
+                status: false,
+                msg: "Invalid Email or Password",
+            });
+
+        let token = jwt.sign(
+            {
+                authorId: author._id.toString(),
+                batch: "radon",
+                organisation: "FunctionUp",
+            },
+            "functionup-radon"   //secret code
+        );
+        res.setHeader("x-api-key", token);
+        res.status(200).send({ status: true, token: token })
+
+        return res.status(200).send({ status: true, token: token, msg: "author logged in successfully" });
     }
     catch (err) {
-        res.status(400).send({ status: false, msg: err.message })
+        return res.status(500).send(err.message);
     }
 }
 
-const loginUser = async function (req, res) {
-    try {
-        let userName = req.body.email
-        let password = req.body.password
-        let user = await authorModel.findOne({ email: userName, password: password })
-        if (!user) return res.status(404).send({ status: false, msg: "username or the password is not correct" })
-        let token = jwt.sign({ userId: user._id.toString(), batch: "radon", organisation: "FUnctionUp", }, "functionup-radon")
-        res.status(200).send({ status: true, data: token, authorId: user._id })
-    }
-    catch (err) {
-        res.status(500).send({ msg: "Error", error: err.message })
-    }
-}
-module.exports.loginUser = loginUser
 module.exports.createAuthor = createAuthor
+module.exports.loginAuthor = loginAuthor

@@ -1,25 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const AuthorController= require("../controllers/authorController");
-const BlogsController= require("../controllers/BlogsController");
-const updateController= require("../controllers/updateController");
-const deleteController= require("../controllers/deleteController");
+const BlogController= require("../controllers/BlogsController");
 const Middleware = require("../middlewares/auth");
 
-
+//Author
 router.post("/authors", AuthorController.createAuthor)
-router.post("/blogs/:userId", BlogsController.createBlog)
-router.get("/getblogs",BlogsController.findBlogs)
-router.get("/filterblogs",BlogsController.filterBlogs)
-router.put("/updateblogs/:blogid",updateController.updateBlogs)
-router.delete("/delblogs/:blogid",deleteController.deleteBlog)
-router.delete("/delblogbyparam",deleteController.deleteBlogsByparams )
+router.post("/login", AuthorController.loginAuthor)
 
+//Blog 
+router.post("/blogs", Middleware.authToken, BlogController.createBlog)
+router.get("/getblogs", Middleware.authToken, BlogController.blogs)
 
-router.post("/loginUser",AuthorController.loginUser)
-router.put("/updateblogs/:blogid",Middleware.authenticate,Middleware.authorise,updateController.updateBlogs)
-router.delete("/delblogs/:blogid",Middleware.authenticate,Middleware.authorise,deleteController.deleteBlog)
-router.delete("/delblogbyparam",Middleware.authenticate,Middleware.authorise,deleteController.deleteBlogsByparams)
+//update blog
+router.put("/updateblogs/:blogId", Middleware.authToken, BlogController.updateblogs)
 
+//delete blog
+router.delete("/deleteblog/:blogId", Middleware.authToken, BlogController.deleteblogs)
+router.delete("/deletequery", Middleware.authToken, BlogController.deleteQuery)
 
 module.exports = router;

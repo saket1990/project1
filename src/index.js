@@ -14,7 +14,6 @@ mongoose.connect("mongodb+srv://rhutvik-patel:jiCI0diV4CDbN9Pr@cluster0.afbog.mo
 .then( () => console.log("MongoDb is connected"))
 .catch ( err => console.log(err) )
 
-
 app.use('/', route);
 
 
