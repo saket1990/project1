@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken")
 
 const createAuthor = async function (req, res) {
     try {
-        let { title, fName, lName, emailId, password } = req.body
+        let { title, fName, lName, email, password } = req.body
         if (!title) { return res.status(400).send({ status: false, message: "author title is required" }) }
         if (title !== "Mr") {
             if (title !== "Mrs") {
@@ -25,10 +25,10 @@ const createAuthor = async function (req, res) {
         if (!/^[a-zA-Z]+$/.test(lName)) {
             res.status(400).send({ status: false, message: "Last name should be a Character" })
         }
-        if (!emailId) {
+        if (!email) {
             return res.status(400).send({ status: false, message: "author email is required" })
         }
-        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailId)) {
+        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
             res.status(400).send({ status: false, message: "Valid emailId is required" })
         }
         if (!password) {
