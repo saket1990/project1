@@ -70,9 +70,7 @@ const loginAuthor = async function (req, res) {
             "functionup-radon"   //secret code
         );
         res.setHeader("x-api-key", token);
-        res.status(200).send({ status: true, token: token })
-
-        return res.status(200).send({ status: true, token: token, msg: "author logged in successfully" });
+        return res.status(200).send({ status: true, msg: "author logged in successfully", token: token });
     }
     catch (err) {
         return res.status(500).send(err.message);

@@ -12,7 +12,7 @@ const authToken = async function (req, res, next) {
             return res.status(400).send({ status: false, msg: "token is invalid" });
         }
         //authorization
-        let userToBeModified = req.body.authorId
+        let userToBeModified = req.params.authorId
         let userLoggedIn = decodedToken.authorId
         if (userToBeModified != userLoggedIn) {
             return res.status(400).send({ status: false, msg: "not authorized" })
