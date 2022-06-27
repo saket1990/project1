@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken")
 
 const createAuthor = async function (req, res) {
     try {
-        let { title, fName, lName, email, password } = req.body
+        let { title, fname, lname, email, password } = req.body
         if (!title) { return res.status(400).send({ status: false, message: "author title is required" }) }
         if (title !== "Mr") {
             if (title !== "Mrs") {
@@ -13,16 +13,16 @@ const createAuthor = async function (req, res) {
                 }
             }
         }
-        if (!fName) {
+        if (!fname) {
             return res.status(400).send({ status: false, message: "author first name is required" })
         }
-        if (!/^[a-zA-Z]+$/.test(fName)) {
+        if (!/^[a-zA-Z]+$/.test(fname)) {
             res.status(400).send({ status: false, message: "First name should be a Character" })
         }
-        if (!lName) {
+        if (!lname) {
             return res.status(400).send({ status: false, message: "author last name is required" })
         }
-        if (!/^[a-zA-Z]+$/.test(lName)) {
+        if (!/^[a-zA-Z]+$/.test(lname)) {
             res.status(400).send({ status: false, message: "Last name should be a Character" })
         }
         if (!email) {
@@ -45,7 +45,7 @@ const createAuthor = async function (req, res) {
 
 const loginAuthor = async function (req, res) {
     try {
-        let authorName = req.body.emailId;
+        let authorName = req.body.email;
         let password = req.body.password;
         if (!authorName) {
             return res.status(400).send({ status: false, msg: "email is required" })

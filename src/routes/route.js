@@ -10,13 +10,13 @@ router.post("/login", AuthorController.loginAuthor)
 
 //Blog 
 router.post("/blogs", Middleware.authToken, BlogController.createBlog)
-router.get("/getblogs", Middleware.authToken, BlogController.blogs)
+router.get("/blogs", Middleware.authToken, BlogController.blogs)
 
 //update blog
-router.put("/updateblogs/:blogId", Middleware.authToken, BlogController.updateblogs)
+router.put("/blogs/:blogId", Middleware.authToken, BlogController.updateblogs)
 
 //delete blog
-router.delete("/deleteblog/:blogId", Middleware.authToken, BlogController.deleteblogs)
-router.delete("/deletequery", Middleware.authToken, BlogController.deleteQuery)
+router.delete("/blogs/:blogId", Middleware.authToken, BlogController.deleteblogs)
+router.delete("/blogs?queryParams", Middleware.authToken, BlogController.deleteQuery)
 
 module.exports = router;

@@ -4,7 +4,7 @@ const BlogModel = require("../models/blogModel")
 //create blog
 const createBlog = async function (req, res) {
     try {
-        const { authorId, title, body, category, ispublished, tags, subcategory, isDeleted} = req.body
+        const { authorId, title, body, category, ispublished, tags, subcategory, isDeleted } = req.body
 
         //validation starts
         if (!authorId) {
@@ -14,31 +14,31 @@ const createBlog = async function (req, res) {
         } else if (!body) {
             res.status(400).send({ status: false, msg: "body is required" })
         } else if (!category) {
-                res.status(400).send({ status: false, msg: "category is required" })
-            } else {
-                const author = await AuthorModel.findById(authorId);
-                if (!author) {
-                    res.status(400).send({ status: false, msg: "Author Id is not valid" })
-                }
-
-                //validations ends
-
-                let blogss = {
-                    title,
-                    body,
-                    authorId,
-                    category,
-                    tags,
-                    subcategory,
-                    ispublished: ispublished ? ispublished : false,
-                    publishedAt: ispublished ? new Date() : null,
-                    isDeleted: isDeleted ? isDeleted : false,
-                    deleteAt: isDeleted ? new Date() : null
-                }
-                let blogCreated = await BlogModel.create(blogss)
-                res.status(201).send({ status: true, data: blogCreated })
-
+            res.status(400).send({ status: false, msg: "category is required" })
+        } else {
+            const author = await AuthorModel.findById(authorId);
+            if (!author) {
+                res.status(400).send({ status: false, msg: "Author Id is not valid" })
             }
+
+            //validations ends
+
+            let blogss = {
+                title,
+                body,
+                authorId,
+                category,
+                tags,
+                subcategory,
+                ispublished: ispublished ? ispublished : false,
+                publishedAt: ispublished ? new Date() : null,
+                isDeleted: isDeleted ? isDeleted : false,
+                deleteAt: isDeleted ? new Date() : null
+            }
+            let blogCreated = await BlogModel.create(blogss)
+            res.status(201).send({ status: true, data: blogCreated })
+
+        }
 
     } catch (err) {
         console.log(err.message)
@@ -111,7 +111,7 @@ const updateblogs = async function (req, res) {
         }
 
         let list = await BlogModel.findOneAndUpdate({ _id: id, isDeleted: false }, {
-            $addToSet:{$or: { tags: { $each: blogData.tags }, subcategory: { $each: blogData.subcategory } }},
+            $addToSet: { $or: { tags: { $each: blogData.tags }, subcategory: { $each: blogData.subcategory } } },
             title: blogData.title,
             body: blogData.body,
             publishedAt: new Date(),
@@ -170,7 +170,7 @@ const deleteQuery = async function (req, res) {
 
 
         let data = await BlogModel.findOne({ $or: [{ category: category }, { tags: tags }, { subcategory: subcategory }, { ispublished: ispublished }, { authorId: authorId }] })
-
+        
 
         if (data.length == 0) {
             return res.status(404).send({ status: false, msg: " Blog doesn't exist " })
