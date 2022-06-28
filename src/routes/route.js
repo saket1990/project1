@@ -17,6 +17,6 @@ router.put("/blogs/:blogId", Middleware.authToken, BlogController.updateblogs)
 
 //delete blog
 router.delete("/blogs/:blogId", Middleware.authToken, BlogController.deleteblogs)
-router.delete("/blogs?queryParams", Middleware.authToken, BlogController.deleteQuery)
+router.delete("/blogs?queryParams", Middleware.authToken, BlogController.deleteBlogsByQuery)
 
 module.exports = router;

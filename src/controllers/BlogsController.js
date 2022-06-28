@@ -158,18 +158,16 @@ const deleteblogs = async function (req, res) {
 
 
 //Delete query param
-const deleteQuery = async function (req, res) {
-    try {
-
-        let authorId = req.query.authorId
-        let subcategory = req.query.subcategory
-        let ispublished = req.query.ispublished
-        let category = req.query.category
-        let tags = req.query.tags
 
 
-
-        let data = await BlogModel.findOne({ $or: [{ category: category }, { tags: tags }, { subcategory: subcategory }, { ispublished: ispublished }, { authorId: authorId }] })
+const deleteBlogsByQuery=async function(req, res){
+    try{const filterQuery={isDeleted:false,deletedAt:null}
+    const queryParams = req.query
+    const authorToken = req.authorId
+    
+    const {authorId, category, tags, subcategory, isPublished} = queryParams
+    if(queryParams.authorId=authorToken){
+        let data = await BlogModel.findOne({ $or: [{ category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }, { authorId: authorId }] })
         
 
         if (data.length == 0) {
@@ -179,20 +177,22 @@ const deleteQuery = async function (req, res) {
         let deletedUser = await BlogModel.updateMany({ authorId: authorId },
             { $set: { isDeleted: true } },
             { new: true })
-
-        if (deletedUser.isDeleted == true) {
-            res.status(400).send({ status: false, msg: "blog is already deleted" })
-        }
-
-        res.status(200).send({ status: true, msg: "deleted successfully", data: deletedUser });
+    
+    if (deletedUser.isDeleted == true) {
+        res.status(400).send({ status: false, msg: "blog is already deleted" })
     }
-    catch (err) {
-        res.status(500).send({ msg: "Error", error: err.message })
+
+    res.status(200).send({ status: true, msg: "deleted successfully", data: deletedUser });
+}
+
+    }catch(err){
+        res.status(500).send({status:false,msg:err.message})
     }
 }
+
 
 module.exports.createBlog = createBlog
 module.exports.blogs = blogs
 module.exports.deleteblogs = deleteblogs
-module.exports.deleteQuery = deleteQuery
+module.exports.deleteBlogsByQuery = deleteBlogsByQuery
 module.exports.updateblogs = updateblogs
